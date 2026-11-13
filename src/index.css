@@ -1,0 +1,125 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Lenis drives scrolling itself; let it own the scroll position. */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  @apply bg-slate-950 text-slate-200 antialiased;
+  font-family: var(--font-sans);
+  /* Faint grid so the dark background is not a flat void. */
+  background-image:
+    linear-gradient(to right, rgb(148 163 184 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Only the keyboard gets a focus ring; the mouse does not. */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-cyan-400;
+}
+
+::selection {
+  @apply bg-cyan-400/30 text-white;
+}
+
+/* ---------------------------------------------------------------- utilities */
+
+@utility glass {
+  @apply border border-white/10 bg-white/[0.03] backdrop-blur-xl;
+}
+
+@utility section-pad {
+  @apply mx-auto w-full max-w-6xl px-6 py-24 sm:px-8 md:py-32;
+}
+
+/* --------------------------------------------------------------- animations */
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(3%, -4%) scale(1.08);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 18s ease-in-out infinite;
+}
+
+.animate-caret {
+  animation: caret 1.1s step-end infinite;
+}
+
+/* Revealed by the IntersectionObserver in useReveal. */
+.reveal {
+  opacity: 0;
+}
+
+.reveal.is-visible {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Anyone who asks for less motion gets none of it. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Covers Tailwind's built-ins (ping, bounce) as well as our own. */
+  .animate-float-slow,
+  .animate-caret,
+  .animate-ping,
+  .animate-bounce {
+    animation: none !important;
+  }
+
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    animation: none !important;
+    transform: none !important;
+  }
+}
